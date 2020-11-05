@@ -5,6 +5,15 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: url('./assets/repeating-trees-background.jpg');
+
+  background-color: #026e00;
+  background-repeat: initial;
+  background-size: 300px 300px;
+  background-blend-mode: multiply;
+  color:  white;
+
+  padding: 0 3em;
 }
 
 code {
