@@ -46,6 +46,12 @@ export default function District() {
   const newMyDistrictInfo = myDistrict.map(({ subject, object }) => {
     const dbpediaLink = store.any(sym(subject.value), OWL('#sameAs'), null);
     const heigthAverage = store.any(sym(subject.value), ONT('districts#hasHeightAverage'), null);
+    const perimeterAverage = store.any(sym(subject.value), ONT('districts#hasPerimeterAverage'), null);
+    const justPlanted = store.any(sym(subject.value), ONT('districts#hasJustPlanted'), null);
+    const young = store.any(sym(subject.value), ONT('districts#hasYoung'), null);
+    const mature = store.any(sym(subject.value), ONT('districts#hasMature'), null);
+    const old = store.any(sym(subject.value), ONT('districts#hasOld'), null);
+    const others = store.any(sym(subject.value), ONT('districts#hasOthers'), null);
 
 
     return {
@@ -53,6 +59,12 @@ export default function District() {
       districtName: unescape(object.value),
       dbpediaLink: dbpediaLink?.value,
       heigthAverage: heigthAverage?.value,
+      perimeterAverage: perimeterAverage?.value,
+      justPlanted: justPlanted?.value,
+      young: young?.value,
+      mature: mature?.value,
+      old: old?.value,
+      others: others?.value,
     };
   });
 
@@ -176,6 +188,12 @@ export default function District() {
       <h3>{districtId}</h3>
       {descriptionDistrict[0]}
       {newMyDistrictInfo[0].heigthAverage}
+      {newMyDistrictInfo[0].perimeterAverage}
+      {newMyDistrictInfo[0].justPlanted}
+      {newMyDistrictInfo[0].young}
+      {newMyDistrictInfo[0].mature}
+      {newMyDistrictInfo[0].old}
+      {newMyDistrictInfo[0].others}
       <div
         className={classes.demo}
         style={{
