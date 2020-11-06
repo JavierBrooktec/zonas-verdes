@@ -45,12 +45,18 @@ export default function District() {
     .map(({ subject, predicate, object }, i) => ({ subject, object }));
   const newMyDistrictInfo = myDistrict.map(({ subject, object }) => {
     const dbpediaLink = store.any(sym(subject.value), OWL('#sameAs'), null);
+    const heigthAverage = store.any(sym(subject.value), ONT('districts#hasHeightAverage'), null);
+
+
     return {
       districtUri: subject.value,
       districtName: unescape(object.value),
       dbpediaLink: dbpediaLink?.value,
+      heigthAverage: heigthAverage?.value,
     };
   });
+
+  console.log(newMyDistrictInfo[0].districtUri);
 
   const treeList = store
     .match(
@@ -59,29 +65,30 @@ export default function District() {
       null
     )
     .map(({ subject, predicate, object }, i) => {
-      const er = /[^\/]+(?=\/$|$)/;
-      const ermacth1 = unescape(object.value.match(er)[0]).replace(
-        /(\w+)\s(\w+)/g,
-        '$1'
-      );
-      const ermacth2 = unescape(object.value.match(er)[0])
-        .replace(/(\w+)\s(\w)(\w+)/g, '$2')
-        .toUpperCase();
-      const ermacth3 = unescape(object.value.match(er)[0]).replace(
-        /(\w+)\s(\w)(\w+)/g,
-        '$3'
-      );
 
-      const ermacth = ermacth1 + ermacth2 + ermacth3;
+      const er = /[^\/]+(?=\/$|$)/;
+      const ermacth = object.value.match(er)[0];
 
       const numberofThisSpecie = store.any(
         sym(newMyDistrictInfo[0].districtUri),
         ONT(`species#hasUnits${ermacth}`),
         null
       );
+
+      const urlofThisSpecie = store.any(
+        sym(object.value),
+        OWL(`#sameAs`),
+        null
+      );
+
+      console.log(object.value);
+      console.log(OWL(`#sameAs`));
+      console.log(urlofThisSpecie);
+
       return {
         especieName: ermacth,
         number: numberofThisSpecie?.value,
+        url: urlofThisSpecie?.value
       };
     });
 
@@ -142,7 +149,8 @@ export default function District() {
     .match(sym(newMyDistrictInfo[0].districtUri), DBONT('abstract'), null)
     .filter(({ object }) => object?.language === 'es')
     .map(({ subject, predicate, object }, i) => <p key={i}>{object.value}</p>);
-
+    
+      
   const useStyles = makeStyles((theme) => ({
     root: {
       flexGrow: 1,
@@ -167,7 +175,7 @@ export default function District() {
     <div>
       <h3>{districtId}</h3>
       {descriptionDistrict[0]}
-
+      {newMyDistrictInfo[0].heigthAverage}
       <div
         className={classes.demo}
         style={{
@@ -178,11 +186,11 @@ export default function District() {
         }}
       >
         <List dense={true} secondary={true}>
-          {treeList.map(({ especieName, number }, i) => (
+          {treeList.map(({ especieName, number, url }, i) => (
             <React.Fragment key={`${especieName}-${i}`}>
               <ListItem>
                 <ListItem>
-                  <ListItemText primary={especieName} secondary={number} />
+                  <a href={url}><ListItemText primary={especieName} secondary={number} /></a>
                 </ListItem>
               </ListItem>
               <Divider />
