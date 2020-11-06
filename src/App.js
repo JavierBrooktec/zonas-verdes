@@ -35,15 +35,10 @@ function App() {
       });
   }, []);
 
-  console.log(store);
-
   const setMystore = (t,base,type) => {
-    console.log(typeof store);
-    console.log(t);
     parse(t, store, base, type, () => {
       console.log('setted');
       setstore(store);
-      // setstore(newStore);
     });
   };
 
