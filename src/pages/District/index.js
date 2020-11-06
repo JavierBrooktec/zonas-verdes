@@ -36,6 +36,8 @@ export default function District() {
   const DBONT = new Namespace('http://dbpedia.org/ontology/');
   const DBPROP = new Namespace('http://dbpedia.org/property/');
 
+//   PopulatedPlace/areaTotal
+
   const { districtId } = useParams();
 
   const [loading, setloading] = useState(true);
@@ -45,14 +47,37 @@ export default function District() {
     .map(({ subject, predicate, object }, i) => ({ subject, object }));
   const newMyDistrictInfo = myDistrict.map(({ subject, object }) => {
     const dbpediaLink = store.any(sym(subject.value), OWL('#sameAs'), null);
-    const heigthAverage = store.any(sym(subject.value), ONT('districts#hasHeightAverage'), null);
-    const perimeterAverage = store.any(sym(subject.value), ONT('districts#hasPerimeterAverage'), null);
-    const justPlanted = store.any(sym(subject.value), ONT('districts#hasJustPlanted'), null);
-    const young = store.any(sym(subject.value), ONT('districts#hasYoung'), null);
-    const mature = store.any(sym(subject.value), ONT('districts#hasMature'), null);
+    const heigthAverage = store.any(
+      sym(subject.value),
+      ONT('districts#hasHeightAverage'),
+      null
+    );
+    const perimeterAverage = store.any(
+      sym(subject.value),
+      ONT('districts#hasPerimeterAverage'),
+      null
+    );
+    const justPlanted = store.any(
+      sym(subject.value),
+      ONT('districts#hasJustPlanted'),
+      null
+    );
+    const young = store.any(
+      sym(subject.value),
+      ONT('districts#hasYoung'),
+      null
+    );
+    const mature = store.any(
+      sym(subject.value),
+      ONT('districts#hasMature'),
+      null
+    );
     const old = store.any(sym(subject.value), ONT('districts#hasOld'), null);
-    const others = store.any(sym(subject.value), ONT('districts#hasOthers'), null);
-
+    const others = store.any(
+      sym(subject.value),
+      ONT('districts#hasOthers'),
+      null
+    );
 
     return {
       districtUri: subject.value,
@@ -77,7 +102,6 @@ export default function District() {
       null
     )
     .map(({ subject, predicate, object }, i) => {
-
       const er = /[^\/]+(?=\/$|$)/;
       const ermacth = object.value.match(er)[0];
 
@@ -100,7 +124,7 @@ export default function District() {
       return {
         especieName: ermacth,
         number: numberofThisSpecie?.value,
-        url: urlofThisSpecie?.value
+        url: urlofThisSpecie?.value,
       };
     });
 
@@ -161,8 +185,10 @@ export default function District() {
     .match(sym(newMyDistrictInfo[0].districtUri), DBONT('abstract'), null)
     .filter(({ object }) => object?.language === 'es')
     .map(({ subject, predicate, object }, i) => <p key={i}>{object.value}</p>);
-    
-      
+  const areaDistrict = store
+    .match(sym(newMyDistrictInfo[0].districtUri), DBONT('PopulatedPlace/areaTotal'), null)
+    .map(({ subject, predicate, object }, i) => <li key={i}>Área: {object.value} Km2</li>);
+
   const useStyles = makeStyles((theme) => ({
     root: {
       flexGrow: 1,
@@ -182,18 +208,22 @@ export default function District() {
 
   const classes = useStyles();
 
-  console.log(imageBG);
+  console.log(areaDistrict);
   return (
     <div>
-      <h3>{districtId}</h3>
+      <h2>{districtId}</h2>
       {descriptionDistrict[0]}
-      {newMyDistrictInfo[0].heigthAverage}
-      {newMyDistrictInfo[0].perimeterAverage}
-      {newMyDistrictInfo[0].justPlanted}
-      {newMyDistrictInfo[0].young}
-      {newMyDistrictInfo[0].mature}
-      {newMyDistrictInfo[0].old}
-      {newMyDistrictInfo[0].others}
+      <h3 style={{textAlign: 'left'}} >Datos</h3>
+      <ul style={{textAlign: 'left'}}>
+        <li>Altura Media: {newMyDistrictInfo[0].heigthAverage}</li>
+        <li>Preimetro Medio: {newMyDistrictInfo[0].perimeterAverage}</li>
+        <li>Recién plantados: {newMyDistrictInfo[0].justPlanted}</li>
+        <li>Jóvenes: {newMyDistrictInfo[0].young}</li>
+        <li>Maduros: {newMyDistrictInfo[0].mature}</li>
+        <li>Viejos: {newMyDistrictInfo[0].old}</li>
+        <li>Others: {newMyDistrictInfo[0].others}</li>
+        {areaDistrict[0]}
+      </ul>
       <div
         className={classes.demo}
         style={{
@@ -208,7 +238,9 @@ export default function District() {
             <React.Fragment key={`${especieName}-${i}`}>
               <ListItem>
                 <ListItem>
-                  <a href={url}><ListItemText primary={especieName} secondary={number} /></a>
+                  <a href={url} target='_blank'>
+                    <ListItemText primary={especieName} secondary={number} />
+                  </a>
                 </ListItem>
               </ListItem>
               <Divider />
